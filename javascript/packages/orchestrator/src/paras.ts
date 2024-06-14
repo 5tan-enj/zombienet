@@ -101,8 +101,8 @@ export async function generateParachainFiles(
     chainSpecFullPath = `${tmpDir}/${chainSpecFileName}`;
     if (!(await isRawSpec(chainSpecFullPathPlain))) {
       // fields
-      const plainData = readAndParseChainSpec(chainSpecFullPathPlain);
-      const relayChainSpec = readAndParseChainSpec(relayChainSpecFullPathPlain);
+      const plainData = await readAndParseChainSpec(chainSpecFullPathPlain);
+      const relayChainSpec = await readAndParseChainSpec(relayChainSpecFullPathPlain);
       if (plainData.para_id) plainData.para_id = parachain.id;
       if (plainData.paraId) plainData.paraId = parachain.id;
       if (plainData.relay_chain) plainData.relay_chain = relayChainSpec.id;
@@ -119,7 +119,7 @@ export async function generateParachainFiles(
         plainData.genesis.runtimeGenesis.config.parachainInfo.parachainId =
           parachain.id;
 
-      writeChainSpec(chainSpecFullPathPlain, plainData);
+      await writeChainSpec(chainSpecFullPathPlain, plainData);
 
       // make genesis overrides first.
       if (parachain.genesis)
@@ -188,10 +188,10 @@ export async function generateParachainFiles(
 
     try {
       // ensure the correct para_id
-      const paraSpecRaw = readAndParseChainSpec(chainSpecFullPath);
+      const paraSpecRaw = await readAndParseChainSpec(chainSpecFullPath);
       if (paraSpecRaw.para_id) paraSpecRaw.para_id = parachain.id;
       if (paraSpecRaw.paraId) paraSpecRaw.paraId = parachain.id;
-      writeChainSpec(chainSpecFullPath, paraSpecRaw);
+      await writeChainSpec(chainSpecFullPath, paraSpecRaw);
     } catch (e: any) {
       if (e.code !== "ERR_FS_FILE_TOO_LARGE") throw e;
 
