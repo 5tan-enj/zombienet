@@ -312,6 +312,11 @@ export async function start(
     // ensure chain raw is ok
     try {
       const chainSpecContent = await readAndParseChainSpec(chainSpecFullPathPlain);
+      console.log(
+        `\n\t\t 🚧 ${decorators.yellow(
+          "Chainspec read complete",
+        )} 🚧`,
+      );
       debug(`Chain name: ${chainSpecContent.name}`);
 
       new CreateLogTable({ colWidths: [120], doubleBorder: true }).pushToPrint([

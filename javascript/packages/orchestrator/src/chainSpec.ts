@@ -669,8 +669,12 @@ export function getRuntimeConfig(chainSpec: any) {
 
 export function readAndParseChainSpec(specPath: string): Promise<any> {
   return new Promise((resolve, reject) => {
+    console.log(decorators.blue('Starting to read and parse the chain spec...'));
+
     const readStream = fs.createReadStream(specPath, { encoding: 'utf8' });
-    const parseStream = bjson.createParseStream();
+    const parseStream = JSONStream.parse('*');
+
+    let parsedData : any = [];
 
     readStream.on('error', (error) => {
       console.error(
@@ -679,8 +683,17 @@ export function readAndParseChainSpec(specPath: string): Promise<any> {
       reject(error);
     });
 
+    readStream.on('open', () => {
+      console.log(decorators.green('File stream opened successfully.'));
+    });
+
+    readStream.on('end', () => {
+      console.log(decorators.green('File stream ended.'));
+    });
+
     parseStream.on('data', (data: any) => {
-      resolve(data);
+      console.log(decorators.yellow('Data received from parse stream:', data));
+      parsedData.push(data);
     });
 
     parseStream.on('error', (error: any) => {
@@ -690,6 +703,13 @@ export function readAndParseChainSpec(specPath: string): Promise<any> {
       reject(error);
     });
 
+    parseStream.on('end', () => {
+      console.log(decorators.green('Parse stream ended.'));
+      console.log(parsedData);
+      resolve(parsedData);
+    });
+
+    console.log(decorators.blue('Piping read stream to parse stream.'));
     readStream.pipe(parseStream);
   });
 }
