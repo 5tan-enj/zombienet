@@ -672,7 +672,7 @@ export function readAndParseChainSpec(specPath: string): Promise<any> {
     console.log(decorators.blue('Starting to read and parse the chain spec...'));
 
     const readStream = fs.createReadStream(specPath, { encoding: 'utf8' });
-    const parseStream = JSONStream.parse('*');
+    const parseStream = JSONStream.parse();
 
     let parsedData : any = [];
 
@@ -697,6 +697,7 @@ export function readAndParseChainSpec(specPath: string): Promise<any> {
     });
 
     parseStream.on('error', (error: any) => {
+      console.log(specPath);
       console.error(
         `\n\t\t  ${decorators.red(`  ⚠ failed to parse the chain spec: ${error}`)}`
       );
@@ -705,8 +706,11 @@ export function readAndParseChainSpec(specPath: string): Promise<any> {
 
     parseStream.on('end', () => {
       console.log(decorators.green('Parse stream ended.'));
-      console.log(parsedData);
-      resolve(parsedData);
+      // console.log(parsedData[0]);
+      // console.log(parsedData[0].genesis);
+      // let data = JSONbig.parse(parsedData);
+      // console.log(data);
+      resolve(parsedData[0]);
     });
 
     console.log(decorators.blue('Piping read stream to parse stream.'));
